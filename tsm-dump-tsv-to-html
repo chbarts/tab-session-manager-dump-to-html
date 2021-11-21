@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Input on stdin, output on stdout
+# jq -r '.[0].windows[][] | [.windowId, .index, .lastAccessed, .title, .url] | @tsv'
+
+awk -F'\t' 'function escapeName(name) { gsub(/&/, "\\&amp;", name); gsub(/</, "\\&lt;", name); gsub(/>/, "\\&gt;", name); return name; } function escapeUrl(url) { url = escapeName(url); gsub(/"/, "\\&#39;", url); return url; } BEGIN { printf "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Tab Session Manager Dump</title></head><body><table border=\"1\"><tr><th>Date Last Accessed</th><th>Name And URL</th></tr>\n" }  { date = strftime("%a %b %e %H:%M:%S %Z %Y", $3/1000); gsub(/ /, "\\&nbsp;", date); printf "<tr><td>%s</td><td><a href=\"%s\">%s</a></td></tr>\n", date, escapeUrl($5), escapeName(length($4) == 0 ? $5 : $4) } END { printf "</table></body></html>\n" }'

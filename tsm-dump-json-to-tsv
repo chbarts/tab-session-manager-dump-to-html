@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Input on stdin, output on stdout
+
+jq -r '.[0].windows[][] | [.windowId, .index, .lastAccessed, .title, .url] | @tsv'
